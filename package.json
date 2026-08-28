@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ollama": "^0.6.3",
+    "three": "^0.185.1"
+  }
+}
