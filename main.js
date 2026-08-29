@@ -29,7 +29,9 @@ timer.connect(document);
 function animate(time) {
   timer.update();
   controls.update();
-  world.cosmos.update(timer.getDelta());
+  if (world.cosmos) {
+    world.cosmos.update(timer.getDelta());
+  }
   renderer.render(world.scene, camera);
 }
 renderer.setAnimationLoop(animate);
@@ -80,8 +82,8 @@ inputChat.addEventListener("keyup", async (event) => {
       agentConvoContainerDiv.appendChild(agentMessageDiv);
       conversationContainer.appendChild(agentConvoContainerDiv);
       conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
-    } catch {
-      console.log("parsing failed.");
+    } catch (e) {
+      console.log(agentResponse.content);
     }
   }
 });

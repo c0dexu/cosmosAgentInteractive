@@ -33,7 +33,7 @@ export class World {
       description:
         "A starter location consisting of one baseplate Cosmos can stand on",
       spawnPoint: new THREE.Vector3(0, 0, 0),
-      filePath: "./scenes/baseplate.glb",
+      filePath: "./scenes/baseplate.gltf",
     },
     {
       id: "location.garden",
@@ -70,11 +70,13 @@ export class World {
       .replace(
         "{{availableInteractables}}",
         this.interactables.length > 0
-          ? [...this.objects.values()].map((x) => x.displayName).join(",")
+          ? [...this.objects.values()].map((x) => x.name).join(",")
           : "None",
       );
     return p;
   }
+
+  load(path) {}
 
   loadMap() {
     if (!this.camera || !this.controls) return;
@@ -82,27 +84,33 @@ export class World {
     const thisRef = this;
     const currLocationPath = this.currentLocation.filePath;
 
-    loader.load(currLocationPath, (gltf) => {
-      thisRef.map3d = gltf.scene;
-      thisRef.scene.add(gltf.scene);
-      gltf.scene.traverse((obj) => {
-        if (obj.type === "Mesh") {
-          console.log(obj);
+    loader.load(
+      currLocationPath,
+      function (gltf) {
+        thisRef.map3d = gltf.scene;
+        thisRef.scene.add(gltf.scene);
+        console.log(this);
 
-          const userData = obj.userData;
-          console.log("DATA", userData);
-          if (userData.id) {
-            const worldObj = new WorldObject(
-              userData.id,
-              userData.displayName,
-              obj.position,
-              userData.interactable,
-            );
-            this.objects.set(worldObj.id, worldObj);
+        gltf.scene.traverse((obj) => {
+          if (obj.type === "Mesh") {
+            const userData = obj.userData;
+            if (userData.id) {
+              const worldObj = new WorldObject(
+                userData.id,
+                userData.name,
+                obj.position,
+                userData.interactable,
+              );
+              thisRef.objects.set(worldObj.id, worldObj);
+            }
           }
-        }
-      });
-    });
+        });
+        this.loadAvatar();
+      }.bind(this),
+    );
+  }
+
+  loadAvatar() {
     const prompt = this.buildPrompt(COSMOS_SYSTEM_PROMPT);
     this.cosmos = new Agent(
       "./models/cosmos.glb",
