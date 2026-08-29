@@ -1,4 +1,10 @@
 import ollama from "ollama";
+
+export class Message{
+  message;
+  proposal;
+}
+
 export class OllamaApi {
   messages;
   constructor(sys_prompt) {

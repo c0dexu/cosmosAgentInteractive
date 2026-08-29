@@ -1,12 +1,10 @@
 import * as THREE from "three";
 
+export const locationsTypes = ["default", "garden", "moonbase"];
+
 export class Location {
   id;
   name;
   description;
-  scene;
-  spawnPoints = {
-    user: new THREE.Vector3(),
-    cosmos: new THREE.Vector3(),
-  };
+  spawnPoint = new THREE.Vector3();
 }
