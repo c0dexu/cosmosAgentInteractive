@@ -7,4 +7,5 @@ export class Location {
   name;
   description;
   spawnPoint = new THREE.Vector3();
+  filePath;
 }
