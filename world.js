@@ -121,11 +121,11 @@ export class World {
       rotation: this.cosmos.avatar.ref.scene.rotation.y,
     };
     const tween = new Tween(temp, false)
-      .to({ x: position.x, y: position.y, z: position.z })
+      .to({ x: position.x, y: position.y, z: position.z, rotation })
       .easing(Easing.Quadratic.InOut)
       .onUpdate(() => {
         this.cosmos.avatar.ref.scene.position.set(temp.x, temp.y, temp.z);
-        this.cosmos.avatar.ref.scene.rotation.y = temp.rotation;
+        this.cosmos.avatar.ref.scene.rotation.set(0, temp.rotation, 0);
       })
       .start();
     this.cosmos.avatar.tween = tween;
