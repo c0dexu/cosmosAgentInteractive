@@ -9,12 +9,12 @@ export class WorldObject {
   id;
   name;
   position;
-  obj3d;
-  constructor(id, name, position, obj3d) {
+  interactable;
+  constructor(id, name, position, interactable) {
     this.id = id;
     this.name = name;
     this.position = position;
-    this.obj3d = obj3d;
+    this.interactable = interactable;
   }
 }
 
@@ -24,7 +24,7 @@ export class World {
   cosmos;
   controls;
   scene = new THREE.Scene();
-  objects = [];
+  objects = new Map();
   interactables = [];
   locations = [
     {
@@ -34,6 +34,14 @@ export class World {
         "A starter location consisting of one baseplate Cosmos can stand on",
       spawnPoint: new THREE.Vector3(0, 0, 0),
       filePath: "./scenes/baseplate.glb",
+    },
+    {
+      id: "location.garden",
+      name: "garden",
+      description:
+        "Minimalistic, but beautiful garden with a few trees surrounding a water pond",
+      spawnPoint: new THREE.Vector3(0, 0, 0),
+      filePath: "./scenes/garden.glb",
     },
   ];
   currentLocation;
@@ -49,16 +57,6 @@ export class World {
     skybox.load();
     this.camera = camera;
     this.controls = controls;
-    const prompt = this.buildPrompt(COSMOS_SYSTEM_PROMPT);
-    console.log("PROMPT", prompt);
-    this.cosmos = new Agent(
-      "./models/cosmos.glb",
-      this.scene,
-      camera,
-      controls,
-      prompt,
-    );
-    this.cosmos.load();
   }
 
   buildPrompt(prompt) {
@@ -72,20 +70,47 @@ export class World {
       .replace(
         "{{availableInteractables}}",
         this.interactables.length > 0
-          ? this.interactables.map((y) => y.name).join(",")
+          ? [...this.objects.values()].map((x) => x.displayName).join(",")
           : "None",
       );
     return p;
   }
 
   loadMap() {
+    if (!this.camera || !this.controls) return;
     const loader = new GLTFLoader();
     const thisRef = this;
     const currLocationPath = this.currentLocation.filePath;
+
     loader.load(currLocationPath, (gltf) => {
-      console.log(gltf);
       thisRef.map3d = gltf.scene;
       thisRef.scene.add(gltf.scene);
+      gltf.scene.traverse((obj) => {
+        if (obj.type === "Mesh") {
+          console.log(obj);
+
+          const userData = obj.userData;
+          console.log("DATA", userData);
+          if (userData.id) {
+            const worldObj = new WorldObject(
+              userData.id,
+              userData.displayName,
+              obj.position,
+              userData.interactable,
+            );
+            this.objects.set(worldObj.id, worldObj);
+          }
+        }
+      });
     });
+    const prompt = this.buildPrompt(COSMOS_SYSTEM_PROMPT);
+    this.cosmos = new Agent(
+      "./models/cosmos.glb",
+      this.scene,
+      this.camera,
+      this.controls,
+      prompt,
+    );
+    this.cosmos.load();
   }
 }

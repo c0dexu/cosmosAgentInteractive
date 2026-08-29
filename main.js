@@ -66,17 +66,22 @@ inputChat.addEventListener("keyup", async (event) => {
     conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
     inputChat.value = "";
     const agentResponse = await world.cosmos.chat(convo.content);
-    conversation.push(agentResponse);
-    const agentConvoContainerDiv = document.createElement("div");
-    const agentNameDiv = document.createElement("div");
-    agentNameDiv.style.color = agentResponse.nameColor;
-    const agentMessageDiv = document.createElement("div");
-    agentMessageDiv.innerText = agentResponse.content;
-    agentNameDiv.innerText = `${agentResponse.name}:  `;
-    agentConvoContainerDiv.style.display = "flex";
-    agentConvoContainerDiv.appendChild(agentNameDiv);
-    agentConvoContainerDiv.appendChild(agentMessageDiv);
-    conversationContainer.appendChild(agentConvoContainerDiv);
-    conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
+    try {
+      const parsed = JSON.parse(agentResponse.content);
+      conversation.push(agentResponse);
+      const agentConvoContainerDiv = document.createElement("div");
+      const agentNameDiv = document.createElement("div");
+      agentNameDiv.style.color = agentResponse.nameColor;
+      const agentMessageDiv = document.createElement("div");
+      agentMessageDiv.innerText = parsed.message;
+      agentNameDiv.innerText = `${agentResponse.name}:  `;
+      agentConvoContainerDiv.style.display = "flex";
+      agentConvoContainerDiv.appendChild(agentNameDiv);
+      agentConvoContainerDiv.appendChild(agentMessageDiv);
+      conversationContainer.appendChild(agentConvoContainerDiv);
+      conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
+    } catch {
+      console.log("parsing failed.");
+    }
   }
 });
