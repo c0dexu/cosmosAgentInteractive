@@ -34,26 +34,26 @@ export class Agent {
 
   async chat(message) {
     const response = await this.api.respond(message);
-    this.avatar.stopAllAnimations();
-    if (response.content.includes("waves")) {
-      this.avatar.setLoopMode("wave", THREE.LoopOnce);
-      this.avatar.playAnimation("wave");
-    }
+    // this.avatar.stopAllAnimations();
+    // if (response.content.includes("waves")) {
+    //   this.avatar.setLoopMode("wave", THREE.LoopOnce);
+    //   this.avatar.playAnimation("wave");
+    // }
 
-    if (response.content.includes("sits")) {
-      this.avatar.setLoopMode("sit", THREE.LoopOnce);
-      this.avatar.setClampWhenFinished("sit", true);
-      this.avatar.playAnimation("sit");
-    }
+    // if (response.content.includes("sits")) {
+    //   this.avatar.setLoopMode("sit", THREE.LoopOnce);
+    //   this.avatar.setClampWhenFinished("sit", true);
+    //   this.avatar.playAnimation("sit");
+    // }
 
-    if (response.content.includes("walks")) {
-      this.avatar.playAnimation("walk2");
-    }
+    // if (response.content.includes("walks")) {
+    //   this.avatar.playAnimation("walk2");
+    // }
 
-    if (response.content.includes("nods")) {
-      this.avatar.setLoopMode("nod", THREE.LoopOnce);
-      this.avatar.playAnimation("nod");
-    }
+    // if (response.content.includes("nods")) {
+    //   this.avatar.setLoopMode("nod", THREE.LoopOnce);
+    //   this.avatar.playAnimation("nod");
+    // }
 
     const parsedResponse = response;
     return parsedResponse;

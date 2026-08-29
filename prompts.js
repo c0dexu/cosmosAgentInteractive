@@ -290,6 +290,9 @@ Example world object:
 garden.bench.west
 Interactions:
 - sit
+- stand
+- walk
+- wave
 
 Valid response:
 

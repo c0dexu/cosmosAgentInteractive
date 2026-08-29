@@ -14,6 +14,7 @@ export class Avatar {
   clipsMap = new Map();
   head;
   modelPath;
+  tween;
 
   constructor(
     modelPath,

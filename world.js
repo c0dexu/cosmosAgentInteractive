@@ -4,6 +4,7 @@ import { COSMOS_SYSTEM_PROMPT } from "./prompts";
 import { locationsTypes } from "./location";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Skybox } from "./skybox";
+import { Easing, Tween } from "@tweenjs/tween.js";
 
 export class WorldObject {
   id;
@@ -111,24 +112,40 @@ export class World {
     );
   }
 
-  teleportTo(position) {
-    this.cosmos.avatar.ref.scene.position.set(
-      position.x,
-      position.y,
-      position.z,
-    );
+  teleportTo(position, rotation) {
+    const mPosition = this.cosmos.avatar.ref.scene.position;
+    const temp = {
+      x: mPosition.x,
+      y: mPosition.y,
+      z: mPosition.z,
+      rotation: this.cosmos.avatar.ref.scene.rotation.y,
+    };
+    const tween = new Tween(temp, false)
+      .to({ x: position.x, y: position.y, z: position.z })
+      .easing(Easing.Quadratic.InOut)
+      .onUpdate(() => {
+        this.cosmos.avatar.ref.scene.position.set(temp.x, temp.y, temp.z);
+        this.cosmos.avatar.ref.scene.rotation.y = temp.rotation;
+      })
+      .start();
+    this.cosmos.avatar.tween = tween;
   }
 
   executeAction(interaction, targetId) {
-    console.log(interaction, targetId);
-    console.log([...this.objects.values()]);
-
     const target = this.objects.get(targetId);
-    console.log(target);
     if (!target) return;
     switch (interaction) {
       case "sit":
+        this.cosmos.avatar.setLoopMode("sit", THREE.LoopOnce);
+        this.cosmos.avatar.setClampWhenFinished("sit", true);
+        this.cosmos.avatar.playAnimation("sit");
         this.teleportTo(target.position);
+        break;
+
+      case "stand":
+        this.cosmos.avatar.setLoopMode("standup", THREE.LoopOnce);
+        this.cosmos.avatar.setClampWhenFinished("standup", true);
+        this.cosmos.avatar.playAnimation("standup");
         break;
     }
   }

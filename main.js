@@ -46,6 +46,9 @@ function animate(time) {
   if (world.cosmos) {
     world.cosmos.update(timer.getDelta());
   }
+  if (world.cosmos && world.cosmos.avatar && world.cosmos.avatar.tween) {
+    world.cosmos.avatar.tween.update(time);
+  }
   renderer.render(world.scene, camera);
 }
 renderer.setAnimationLoop(animate);
