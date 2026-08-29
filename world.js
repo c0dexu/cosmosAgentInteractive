@@ -60,6 +60,7 @@ export class World {
   }
 
   buildPrompt(prompt) {
+    console.log([...this.objects.values()]);
     const p = prompt
       .replace("{{locationName}}", this.currentLocation.name)
       .replace("{{locationDescription}}", this.currentLocation.description)
@@ -69,8 +70,8 @@ export class World {
       )
       .replace(
         "{{availableInteractables}}",
-        this.interactables.length > 0
-          ? [...this.objects.values()].map((x) => x.name).join(",")
+        [...this.objects.values()].length > 0
+          ? [...this.objects.values()].map((x) => x.id).join(",")
           : "None",
       );
     return p;
@@ -105,9 +106,15 @@ export class World {
             }
           }
         });
+        console.log([...this.objects.values()]);
         this.loadAvatar();
       }.bind(this),
     );
+  }
+
+  teleportTo(position) {
+    console.log("COSMOS", this.cosmos);
+    this.cosmos.avatar.ref.position.set(position.x, position.y, position.z);
   }
 
   loadAvatar() {

@@ -8,6 +8,20 @@ import { Agent } from "./agent";
 import { COSMOS_SYSTEM_PROMPT } from "./prompts";
 import { World } from "./world";
 
+function createMessage(conversationContainer, convo) {
+  const userConvoContainerDiv = document.createElement("div");
+  const userNameDiv = document.createElement("div");
+  const userMessageDiv = document.createElement("div");
+  userMessageDiv.innerText = convo.content;
+  userNameDiv.innerText = `${convo.name}:  `;
+  userNameDiv.style.color = convo.nameColor;
+  userConvoContainerDiv.style.display = "flex";
+  userConvoContainerDiv.appendChild(userNameDiv);
+  userConvoContainerDiv.appendChild(userMessageDiv);
+  conversationContainer.appendChild(userConvoContainerDiv);
+  conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
+}
+
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -55,35 +69,30 @@ inputChat.addEventListener("keyup", async (event) => {
       content: inputChat.value,
     };
     conversation.push(convo);
-    const userConvoContainerDiv = document.createElement("div");
-    const userNameDiv = document.createElement("div");
-    const userMessageDiv = document.createElement("div");
-    userMessageDiv.innerText = convo.content;
-    userNameDiv.innerText = `${convo.name}:  `;
-    userNameDiv.style.color = convo.nameColor;
-    userConvoContainerDiv.style.display = "flex";
-    userConvoContainerDiv.appendChild(userNameDiv);
-    userConvoContainerDiv.appendChild(userMessageDiv);
-    conversationContainer.appendChild(userConvoContainerDiv);
-    conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
+    createMessage(conversationContainer, convo);
     inputChat.value = "";
     const agentResponse = await world.cosmos.chat(convo.content);
     try {
       const parsed = JSON.parse(agentResponse.content);
+      world.teleportTo(new THREE.Vector3(0, 5, 0));
       conversation.push(agentResponse);
-      const agentConvoContainerDiv = document.createElement("div");
-      const agentNameDiv = document.createElement("div");
-      agentNameDiv.style.color = agentResponse.nameColor;
-      const agentMessageDiv = document.createElement("div");
-      agentMessageDiv.innerText = parsed.message;
-      agentNameDiv.innerText = `${agentResponse.name}:  `;
-      agentConvoContainerDiv.style.display = "flex";
-      agentConvoContainerDiv.appendChild(agentNameDiv);
-      agentConvoContainerDiv.appendChild(agentMessageDiv);
-      conversationContainer.appendChild(agentConvoContainerDiv);
-      conversationContainer.scrollTo(0, conversationContainer.scrollHeight);
+      createMessage(conversationContainer, {
+        ...agentResponse,
+        content: parsed.message,
+      });
     } catch (e) {
-      console.log(agentResponse.content);
+      conversation.push({
+        error: null,
+        name: "Cosmos",
+        nameColor: "#adc2ff",
+        content: agentResponse.content,
+      });
+      createMessage(conversationContainer, {
+        error: null,
+        name: "Cosmos",
+        nameColor: "#adc2ff",
+        content: agentResponse.content,
+      });
     }
   }
 });
