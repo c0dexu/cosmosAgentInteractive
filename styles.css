@@ -51,3 +51,7 @@ canvas {
     height: 256px;
     margin-bottom: 1rem;
 }
+
+.typing-indicator {
+    color: #a6a6a6;
+}

@@ -56,6 +56,9 @@ renderer.setAnimationLoop(animate);
 const conversation = [];
 const conversationContainer = document.getElementById("conversation-container");
 const inputChat = document.querySelector("#input-chat");
+const typingIndicator = document.getElementById("typingIndicator");
+
+typingIndicator.style.display = "none";
 
 document.addEventListener("keyup", (event) => {
   if (event.key === "C") {
@@ -74,8 +77,10 @@ inputChat.addEventListener("keyup", async (event) => {
     conversation.push(convo);
     createMessage(conversationContainer, convo);
     inputChat.value = "";
+    typingIndicator.style.display = "block";
     const agentResponse = await world.cosmos.chat(convo.content);
-    console.log("AGENT RESPONSE", agentResponse);
+    typingIndicator.style.display = "none";
+
     try {
       const parsed = JSON.parse(agentResponse.content);
       if (parsed.proposal) {

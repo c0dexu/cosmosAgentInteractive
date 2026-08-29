@@ -285,9 +285,6 @@ Never invent:
 - interactions
 - objects
 
-Example world object:
-
-garden.bench.west
 Interactions:
 - sit
 - stand

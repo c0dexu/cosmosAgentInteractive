@@ -11,11 +11,13 @@ export class WorldObject {
   name;
   position;
   interactable;
-  constructor(id, name, position, interactable) {
+  rotation;
+  constructor(id, name, position, rotation, interactable) {
     this.id = id;
     this.name = name;
     this.position = position;
     this.interactable = interactable;
+    this.rotation = rotation;
   }
 }
 
@@ -101,6 +103,7 @@ export class World {
                 userData.id,
                 userData.name,
                 obj.position,
+                obj.rotation.y,
                 userData.interactable,
               );
               thisRef.objects.set(worldObj.id, worldObj);
@@ -126,6 +129,7 @@ export class World {
       .onUpdate(() => {
         this.cosmos.avatar.ref.scene.position.set(temp.x, temp.y, temp.z);
         this.cosmos.avatar.ref.scene.rotation.set(0, temp.rotation, 0);
+        console.log(temp);
       })
       .start();
     this.cosmos.avatar.tween = tween;
@@ -139,7 +143,7 @@ export class World {
         this.cosmos.avatar.setLoopMode("sit", THREE.LoopOnce);
         this.cosmos.avatar.setClampWhenFinished("sit", true);
         this.cosmos.avatar.playAnimation("sit");
-        this.teleportTo(target.position);
+        this.teleportTo(target.position, target.rotation);
         break;
 
       case "stand":
