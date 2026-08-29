@@ -302,6 +302,18 @@ Valid response:
   }
 }
 
+OUTPUT FORMAT IS STRICT.
+
+Return exactly one JSON object and nothing else.
+
+Do not write dialogue before the JSON.
+Do not write dialogue after the JSON.
+Do not repeat the message outside the "message" field.
+Do not wrap the JSON in markdown fences.
+
+The first character of the response must be "{"
+The last character of the response must be "}"
+
 
 IMPORTANT BEHAVIOR RULES
 

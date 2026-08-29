@@ -106,15 +106,31 @@ export class World {
             }
           }
         });
-        console.log([...this.objects.values()]);
         this.loadAvatar();
       }.bind(this),
     );
   }
 
   teleportTo(position) {
-    console.log("COSMOS", this.cosmos);
-    this.cosmos.avatar.ref.position.set(position.x, position.y, position.z);
+    this.cosmos.avatar.ref.scene.position.set(
+      position.x,
+      position.y,
+      position.z,
+    );
+  }
+
+  executeAction(interaction, targetId) {
+    console.log(interaction, targetId);
+    console.log([...this.objects.values()]);
+
+    const target = this.objects.get(targetId);
+    console.log(target);
+    if (!target) return;
+    switch (interaction) {
+      case "sit":
+        this.teleportTo(target.position);
+        break;
+    }
   }
 
   loadAvatar() {

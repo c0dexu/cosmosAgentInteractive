@@ -72,12 +72,24 @@ inputChat.addEventListener("keyup", async (event) => {
     createMessage(conversationContainer, convo);
     inputChat.value = "";
     const agentResponse = await world.cosmos.chat(convo.content);
+    console.log("AGENT RESPONSE", agentResponse);
     try {
       const parsed = JSON.parse(agentResponse.content);
-      world.teleportTo(new THREE.Vector3(0, 5, 0));
-      conversation.push(agentResponse);
+      if (parsed.proposal) {
+        world.executeAction(
+          parsed.proposal.interaction,
+          parsed.proposal.targetId,
+        );
+      }
+
+      conversation.push({
+        name: agentResponse.name,
+        nameColor: agentResponse.nameColor,
+        content: parsed.message,
+      });
       createMessage(conversationContainer, {
-        ...agentResponse,
+        name: agentResponse.name,
+        nameColor: agentResponse.nameColor,
         content: parsed.message,
       });
     } catch (e) {
