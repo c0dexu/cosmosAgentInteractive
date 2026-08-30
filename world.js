@@ -42,15 +42,15 @@ export class World {
       id: "location.garden",
       name: "garden",
       description:
-        "Minimalistic, but beautiful garden with a few trees surrounding a water pond",
+        "Minimalistic, but beautiful garden with a few trees surrounding a fountain with some benches and a cobblestone road",
       spawnPoint: new THREE.Vector3(0, 0, 0),
-      filePath: "./scenes/garden.glb",
+      filePath: "./scenes/garden.gltf",
     },
   ];
   currentLocation;
 
   constructor(camera, controls) {
-    this.currentLocation = this.locations[0];
+    this.currentLocation = this.locations[1];
     const color = 0xffffff;
     const color2 = 0xfcc5fc;
     const intensity = 2;
@@ -115,7 +115,7 @@ export class World {
     );
   }
 
-  teleportTo(position, rotation) {
+  goTo(position, rotation) {
     const mPosition = this.cosmos.avatar.ref.scene.position;
     const temp = {
       x: mPosition.x,
@@ -138,18 +138,19 @@ export class World {
   executeAction(interaction, targetId) {
     const target = this.objects.get(targetId);
     if (!target) return;
+    this.cosmos.avatar.stopAllAnimations();
     switch (interaction) {
       case "sit":
         this.cosmos.avatar.setLoopMode("sit", THREE.LoopOnce);
         this.cosmos.avatar.setClampWhenFinished("sit", true);
         this.cosmos.avatar.playAnimation("sit");
-        this.teleportTo(target.position, target.rotation);
+        this.goTo(target.position, target.rotation);
         break;
 
-      case "stand":
+      case "standup":
         this.cosmos.avatar.setLoopMode("standup", THREE.LoopOnce);
-        this.cosmos.avatar.setClampWhenFinished("standup", true);
         this.cosmos.avatar.playAnimation("standup");
+        this.goTo(new THREE.Vector3(0, 0, 0), 0);
         break;
     }
   }

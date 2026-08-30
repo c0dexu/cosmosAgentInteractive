@@ -287,7 +287,7 @@ Never invent:
 
 Interactions:
 - sit
-- stand
+- standup
 - walk
 - wave
 

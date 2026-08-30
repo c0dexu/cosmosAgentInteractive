@@ -10,6 +10,7 @@ export class Agent {
   camera;
   controls;
   modelPath;
+  speaking = false;
   constructor(modelPath, scene, camera, controls, sys_prompt) {
     this.api = new OllamaApi(sys_prompt);
     this.scene = scene;
@@ -33,27 +34,17 @@ export class Agent {
   }
 
   async chat(message) {
+    this.speaking = true;
     const response = await this.api.respond(message);
-    // this.avatar.stopAllAnimations();
-    // if (response.content.includes("waves")) {
-    //   this.avatar.setLoopMode("wave", THREE.LoopOnce);
-    //   this.avatar.playAnimation("wave");
-    // }
+    this.speaking = false;
+    if (response.content.includes("waves")) {
+      this.avatar.setLoopMode("wave", THREE.LoopOnce);
+      this.avatar.playAnimation("wave");
+    }
 
-    // if (response.content.includes("sits")) {
-    //   this.avatar.setLoopMode("sit", THREE.LoopOnce);
-    //   this.avatar.setClampWhenFinished("sit", true);
-    //   this.avatar.playAnimation("sit");
-    // }
-
-    // if (response.content.includes("walks")) {
-    //   this.avatar.playAnimation("walk2");
-    // }
-
-    // if (response.content.includes("nods")) {
-    //   this.avatar.setLoopMode("nod", THREE.LoopOnce);
-    //   this.avatar.playAnimation("nod");
-    // }
+    if (response.content.includes("walks")) {
+      this.avatar.playAnimation("walk2");
+    }
 
     const parsedResponse = response;
     return parsedResponse;

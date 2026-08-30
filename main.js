@@ -67,7 +67,7 @@ document.addEventListener("keyup", (event) => {
 });
 
 inputChat.addEventListener("keyup", async (event) => {
-  if (event.key === "Enter") {
+  if (event.key === "Enter" && !world.cosmos.speaking) {
     const convo = {
       error: null,
       name: "You",
